@@ -1,9 +1,27 @@
 var React = require('react/addons');
 
 var TreeView = React.createClass({
+    getDefaultProps: function() {
+        return {
+            levelsExpanded: 1
+        };
+    },
+
+    childContextTypes: {
+        levelsExpanded: React.PropTypes.number
+    },
+
+    getChildContext: function() {
+        return {
+            levelsExpanded: this.props.levelsExpanded
+        };
+    },
+
     render: function() {
         return (
-            <TreeNodeValue data={ this.props.data }/>
+            <TreeNodeValue
+                data={ this.props.data }
+                level={ 0 } />
         );
     }
 });
@@ -15,6 +33,16 @@ var TreeNode = React.createClass({
         };
     },
 
+    contextTypes: {
+        levelsExpanded: React.PropTypes.number.isRequired,
+    },
+
+    componentWillMount: function() {
+        this.setState({
+            expanded: (this.props.level <= this.context.levelsExpanded)
+        });
+    },
+
     render: function() {
         var label = null;
         if (this.props.label) {
@@ -24,7 +52,10 @@ var TreeNode = React.createClass({
         return (
             <li onClick={ this.onClickToggle }>
                 { label }
-                <TreeNodeValue data={ this.props.value } expanded={ this.state.expanded }/>
+                <TreeNodeValue
+                    data={ this.props.value }
+                    level={ this.props.level }
+                    expanded={ this.state.expanded }/>
             </li>
         );
     },
@@ -49,7 +80,8 @@ var TreeNodeLabel = React.createClass({
 var TreeNodeValue = React.createClass({
     getDefaultProps: function() {
         return {
-            expanded: true
+            expanded: true,
+            level: 0
         };
     },
 
@@ -60,7 +92,10 @@ var TreeNodeValue = React.createClass({
                     <ol className="treeview-value-array" start="0">
                         {this.props.data.map(function(item, index) {
                             return (
-                                <TreeNode key={ index } label="" value={ item }/>
+                                <TreeNode
+                                    key={ index }
+                                    level={ this.props.level + 1 }
+                                    label="" value={ item }/>
                             );
                         }, this)}
                     </ol>
@@ -77,7 +112,10 @@ var TreeNodeValue = React.createClass({
                         {Object.keys(this.props.data).map(function(key) {
                             var val = this.props.data[key];
                             return (
-                                <TreeNode key={ key } label={ key } value={ val }/>
+                                <TreeNode
+                                    key={ key }
+                                    level={ this.props.level + 1 }
+                                    label={ key } value={ val }/>
                             );
                         }, this)}
                     </ul>
