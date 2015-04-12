@@ -9,18 +9,32 @@ var TreeView = React.createClass({
 });
 
 var TreeNode = React.createClass({
+    getInitialState: function() {
+        return {
+            expanded: false
+        };
+    },
+
     render: function() {
+        var label = null;
         if (this.props.label) {
-            return (
-                <li>
-                    <TreeNodeLabel label={ this.props.label }/>
-                    <TreeNodeValue data={ this.props.value }/>
-                </li>
-            );
+            label = <TreeNodeLabel label={ this.props.label }/>;
         }
-        else {
-            return <li><TreeNodeValue data={ this.props.value }/></li>;
-        }
+
+        return (
+            <li onClick={ this.onClickToggle }>
+                { label }
+                <TreeNodeValue data={ this.props.value } expanded={ this.state.expanded }/>
+            </li>
+        );
+    },
+
+    onClickToggle: function(ev) {
+        this.setState({
+            expanded: !this.state.expanded
+        });
+
+        ev.stopPropagation();
     }
 });
 
@@ -33,32 +47,48 @@ var TreeNodeLabel = React.createClass({
 });
 
 var TreeNodeValue = React.createClass({
+    getDefaultProps: function() {
+        return {
+            expanded: true
+        };
+    },
+
     render: function() {
         if (this.props.data.constructor === Array) {
-            return (
-                <ol className="treeview-value-array" start="0">
-                    {this.props.data.map(function(item, index) {
-                        return (
-                            <TreeNode key={ index } label="" value={ item }/>
-                        );
-                    }, this)}
-                </ol>
-            )
+            if (this.props.expanded) {
+                return (
+                    <ol className="treeview-value-array" start="0">
+                        {this.props.data.map(function(item, index) {
+                            return (
+                                <TreeNode key={ index } label="" value={ item }/>
+                            );
+                        }, this)}
+                    </ol>
+                );
+            }
+            else {
+                return <span className="treeview-value-placeholder">[...]</span>;
+            }
         }
         else if (this.props.data.constructor === Object) {
-            return (
-                <ul className="treeview-value-object">
-                    {Object.keys(this.props.data).map(function(key) {
-                        var val = this.props.data[key];
-                        return (
-                            <TreeNode key={ key } label={ key } value={ val }/>
-                        );
-                    }, this)}
-                </ul>
-            )
+            if (this.props.expanded) {
+                return (
+                    <ul className="treeview-value-object">
+                        {Object.keys(this.props.data).map(function(key) {
+                            var val = this.props.data[key];
+                            return (
+                                <TreeNode key={ key } label={ key } value={ val }/>
+                            );
+                        }, this)}
+                    </ul>
+                );
+            }
+            else {
+                return <span className="treeview-value-placeholder">{'{...}'}</span>;
+            }
         }
         else {
-            return <span className="treeview-node-value">{ this.props.data }</span>;
+            return <span className="treeview-value-pod">{ this.props.data }</span>;
         }
     }
 });
