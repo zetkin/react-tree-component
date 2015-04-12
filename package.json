@@ -1,0 +1,39 @@
+{
+  "name": "react-tree-component",
+  "version": "0.0.1",
+  "description": "Easy-to-use component for rendering object trees in React.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:zetkin/react-tree-component.git"
+  },
+  "keywords": [
+    "react",
+    "tree",
+    "component",
+    "recursive",
+    "json",
+    "object",
+    "inspect"
+  ],
+  "browserify": {
+    "transform": [
+      "reactify"
+    ]
+  },
+  "author": "Richard Olsson <r@richardolsson.se>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zetkin/react-tree-component/issues"
+  },
+  "homepage": "https://github.com/zetkin/react-tree-component",
+  "peerDependencies": {
+    "react": "^0.13.1"
+  },
+  "dependencies": {
+    "reactify": "^1.1.0"
+  }
+}
