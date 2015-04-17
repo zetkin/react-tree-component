@@ -1,5 +1,9 @@
 var React = require('react/addons');
 
+function typeOf(obj) {
+    return Object.prototype.toString.apply(obj).slice(8, -1).toLowerCase();
+}
+
 var TreeView = React.createClass({
     getDefaultProps: function() {
         return {
@@ -86,10 +90,17 @@ var TreeNodeValue = React.createClass({
     },
 
     render: function() {
-        if (this.props.data.constructor === Array) {
+        var type = typeOf(this.props.data)
+        var classes = "treeview-root";
+        if (this.props.level){
+            classes = 'treeview-value treeview-type-' + type;
+        }
+
+        if (type === 'array') {
             if (this.props.expanded) {
+                classes += ' treeview-expanded'
                 return (
-                    <ol className="treeview-value-array" start="0">
+                    <ol className={classes} start="0">
                         {this.props.data.map(function(item, index) {
                             return (
                                 <TreeNode
@@ -102,13 +113,14 @@ var TreeNodeValue = React.createClass({
                 );
             }
             else {
-                return <span className="treeview-value-placeholder">[...]</span>;
+                return <span className={classes}>[...]</span>;
             }
         }
-        else if (this.props.data.constructor === Object) {
+        else if (type === 'object') {
             if (this.props.expanded) {
+                classes += ' treeview-expanded'
                 return (
-                    <ul className="treeview-value-object">
+                    <ul className={classes}>
                         {Object.keys(this.props.data).map(function(key) {
                             var val = this.props.data[key];
                             return (
@@ -122,11 +134,17 @@ var TreeNodeValue = React.createClass({
                 );
             }
             else {
-                return <span className="treeview-value-placeholder">{'{...}'}</span>;
+                return <span className={classes}>{'{...}'}</span>;
             }
         }
+        else if (type === 'boolean') {
+                return <span className={classes}>{ this.props.data.toString() }</span>;
+        }
+        else if (type === 'undefined' || type === 'null') {
+            return <span className={classes}>{ type }</span>;
+        }
         else {
-            return <span className="treeview-value-pod">{ this.props.data }</span>;
+            return <span className={classes}>{ this.props.data }</span>;
         }
     }
 });
