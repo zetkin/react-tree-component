@@ -17,7 +17,11 @@ window.onload = function() {
                 }
             ],
             length: 2,
-            created: '20150321T13:37'
+            created: '20150321T13:37',
+            tested: true,
+            published: false,
+            links: null,
+            host: undefined
         }
     };
     
